@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gamified Task Hub</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-mode"> <div id="bg-elements"></div>
+
+    <header>
+        <div class="left-nav">
+            <button class="icon-btn">👤</button>
+            <button class="icon-btn menu-trigger">☰</button>
+        </div>
+        <div class="right-nav">
+            <div class="coin-display">🪙 <span id="coin-count">150</span></div>
+            <button class="icon-btn">📅</button>
+            <button class="icon-btn">🔔</button>
+        </div>
+    </header>
+
+    <main>
+        <div class="quote-board">
+            <p class="tag">Daily Wisdom</p>
+            <h3 id="daily-quote">"Consistency is the key to greatness."</h3>
+        </div>
+
+        <div class="menu-container">
+            <button class="main-btn primary">
+                <span class="btn-text">Enter My Profile</span>
+                <span class="btn-sub">Manage Streaks</span>
+            </button>
+            <button class="main-btn">
+                <span class="btn-text">Friends</span>
+                <span class="btn-sub">Leaderboards</span>
+            </button>
+            <button class="main-btn">
+                <span class="btn-text">Settings</span>
+                <span class="btn-sub">Theme & Pets</span>
+            </button>
+        </div>
+
+        <div id="pet-container">
+            <div class="pet-sprite">🐱</div>
+            <div class="pet-status">I'm hungry!</div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
