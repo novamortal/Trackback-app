@@ -1,0 +1,345 @@
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+
+// Mock Quote Data
+const quotes = ["Level up your life.", "Consistency is key.", "No tasks left behind."];
+
+const GamifiedTaskApp = () => {
+  const [theme, setTheme] = useState('dark');
+  const [coins, setCoins] = useState(150);
+  const [currentQuote, setCurrentQuote] = useState(quotes[0]);
+
+  // Handle Auto-Theme Logic (6AM - 6PM)
+  useEffect(() => {
+    const hour = new Date().getHours();
+    if (hour >= 6 && hour < 18) setTheme('light');
+    else setTheme('dark');
+  }, []);
+
+  return (
+    <div className={`${theme === 'dark' ? 'bg-[#0a0a0a] text-white' : 'bg-gray-100 text-black'} 
+      min-h-screen w-full relative overflow-hidden transition-colors duration-500 font-sans`}>
+      
+      {/* BACKGROUND ANIMATED ELEMENTS (The "Climate/Wind" effect) */}
+      <div className="absolute inset-0 pointer-events-none">
+        {[...Array(10)].map((_, i) => (
+          <motion.div
+            key={i}
+            animate={{ 
+              y: [0, -1000], 
+              opacity: [0, 0.5, 0],
+              x: Math.random() * 100 
+            }}
+            transition={{ duration: 10 + Math.random() * 10, repeat: Infinity }}
+            className={`absolute w-1 h-20 bg-gradient-to-b from-transparent 
+              ${theme === 'dark' ? 'to-cyan-400' : 'to-blue-500'} opacity-20`}
+            style={{ left: `${Math.random() * 100}%`, top: '100%' }}
+          />
+        ))}
+      </div>
+
+      {/* HEADER: Profile & Burger Menu */}
+      <header className="absolute top-6 left-6 right-6 flex justify-between items-center z-50">
+        <div className="flex gap-4">
+          <motion.button whileHover={{ scale: 1.1 }} className="w-12 h-12 rounded-xl bg-[#1a1a1a] border-2 border-gray-700 shadow-lg flex items-center justify-center">
+            👤
+          </motion.button>
+          <motion.button whileHover={{ scale: 1.1 }} className="w-12 h-12 rounded-xl bg-[#1a1a1a] border-2 border-gray-700 shadow-lg flex flex-col gap-1 items-center justify-center">
+            <div className="w-6 h-0.5 bg-white"></div>
+            <div className="w-6 h-0.5 bg-white"></div>
+            <div className="w-6 h-0.5 bg-white"></div>
+          </motion.button>
+        </div>
+        
+        <div className="flex gap-4">
+          <div className="bg-[#1a1a1a] px-4 py-2 rounded-full border border-yellow-500/50 flex items-center gap-2">
+             <motion.span animate={{ rotateY: 360 }} transition={{ repeat: Infinity, duration: 3 }}>🪙</motion.span>
+             <span className="font-bold text-yellow-500">{coins}</span>
+          </div>
+          <button className="text-2xl">📅</button>
+          <button className="text-2xl">🔔</button>
+        </div>
+      </header>
+
+      {/* LEFT SIDE: 3D Quote Board (Minecraft Style) */}
+      <motion.div 
+        initial={{ x: -200 }} animate={{ x: 0 }}
+        className="absolute left-10 top-1/3 w-48 p-4 bg-[#222] border-l-8 border-b-8 border-black rounded shadow-2xl rotate-3"
+      >
+        <p className="text-xs uppercase text-gray-500 mb-2">Daily Wisdom</p>
+        <p className="text-sm font-mono tracking-tighter text-cyan-400">"{currentQuote}"</p>
+      </motion.div>
+
+      {/* MAIN CENTER BUTTONS */}
+      <main className="flex flex-col items-center justify-center h-screen gap-6 z-10 relative">
+        <MenuButton label="Enter My Profile" sub="Manage Streaks" primary />
+        <MenuButton label="Friends" sub="Leaderboards" />
+        <MenuButton label="Settings" sub="Theme & Pets" />
+      </main>
+
+      {/* THE PET (Right Side) */}
+      <motion.div 
+        whileHover={{ scale: 1.2, rotate: -5 }}
+        className="absolute right-20 bottom-20 cursor-pointer text-center"
+      >
+        <div className="text-8xl mb-2">🐱</div>
+        <div className="bg-black/50 px-3 py-1 rounded-full text-xs border border-white/20">Purr-fectly Ready!</div>
+      </motion.div>
+
+    </div>
+  );
+};
+
+const MenuButton = ({ label, sub, primary }) => (
+  <motion.button
+    whileHover={{ scale: 1.05, translateY: -5 }}
+    whileTap={{ scale: 0.95 }}
+    className={`w-80 p-6 rounded-2xl border-b-4 active:border-b-0 transition-all
+      ${primary ? 'bg-cyan-600 border-cyan-800' : 'bg-[#1a1a1a] border-black text-white'}
+      shadow-[0_10px_20px_rgba(0,0,0,0.4)] relative group overflow-hidden`}
+  >
+    <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+    <h2 className="text-2xl font-black uppercase italic tracking-wider">{label}</h2>
+    <p className="text-xs opacity-60 uppercase">{sub}</p>
+  </motion.button>
+);
+
+export default GamifiedTaskApp;
+──────────────────────────────────────────
+  const handleStartQuiz = () => {
+    if (!nickname.trim() || questions.length === 0) return;
+    setCurrentQ(0); setAnswers({}); setTimeTaken({});
+    setSelected(null); setScore(0); setTotalTime(0);
+    setScreen("quiz");
+    startTimer(questions[0].timer);
+  };
+
+  const handleNext = useCallback((sel, forcedElapsed) => {
+    stopTimer();
+    const q = questions[currentQ];
+    const elapsed = forcedElapsed ?? Math.round((Date.now() - startTimeRef.current) / 1000);
+    const isCorrect = sel !== null && sel === q.correct;
+
+    const newAnswers = { ...answers, [currentQ]: sel };
+    const newTimeTaken = { ...timeTaken, [currentQ]: elapsed };
+    setAnswers(newAnswers);
+    setTimeTaken(newTimeTaken);
+    setSelected(null);
+
+    const nextQ = currentQ + 1;
+    if (nextQ < questions.length) {
+      setCurrentQ(nextQ);
+      startTimer(questions[nextQ].timer);
+    } else {
+      // Calculate final score & total time
+      let s = 0, t = 0;
+      questions.forEach((qq, i) => {
+        if (newAnswers[i] === qq.correct) s++;
+        t += newTimeTaken[i] || qq.timer;
+      });
+      setScore(s); setTotalTime(t);
+      const entry = { nickname, score: s, totalTime: t, total: questions.length, date: new Date().toLocaleDateString("en-IN") };
+      // Fetch latest leaderboard before saving
+      (async () => {
+        let lb = leaderboard;
+        try {
+          const fresh = await window.storage.get("liveQuiz-leaderboard", true);
+          if (fresh) lb = JSON.parse(fresh.value);
+        } catch {}
+        const updated = [...lb, entry]
+          .sort((a, b) => b.score - a.score || a.totalTime - b.totalTime)
+          .slice(0, 50);
+        saveLeaderboard(updated);
+      })();
+      setScreen("result");
+    }
+  }, [currentQ, questions, answers, timeTaken, stopTimer, startTimer, leaderboard, nickname]);
+
+  // ── Admin helpers ────────────────────────────────────────────────
+  const handleAdminLogin = () => {
+    if (adminPass === ADMIN_PASSWORD) { setScreen("admin"); setAdminError(""); setAdminPass(""); }
+    else setAdminError("Wrong password!");
+  };
+
+  const addQuestion = () => {
+    if (!newQ.question.trim() || newQ.options.some(o => !o.trim())) return;
+    const updated = [...questions, { ...newQ, id: Date.now() }];
+    saveQuestions(updated);
+    setNewQ({ question: "", options: ["", "", "", ""], correct: 0, timer: 20 });
+    setShowAddForm(false);
+  };
+
+  const deleteQuestion = (id) => saveQuestions(questions.filter(q => q.id !== id));
+
+  const updateOpt = (i, val) => {
+    const opts = [...newQ.options]; opts[i] = val;
+    setNewQ({ ...newQ, options: opts });
+  };
+
+  const startEdit = (q) => {
+    setEditId(q.id);
+    setNewQ({ question: q.question, options: [...q.options], correct: q.correct, timer: q.timer });
+    setShowAddForm(true);
+  };
+
+  const saveEdit = () => {
+    const updated = questions.map(q => q.id === editId ? { ...newQ, id: editId } : q);
+    saveQuestions(updated);
+    setNewQ({ question: "", options: ["", "", "", ""], correct: 0, timer: 20 });
+    setShowAddForm(false); setEditId(null);
+  };
+
+  const clearLeaderboard = async () => {
+    if (window.confirm("Clear all leaderboard entries?")) saveLeaderboard([]);
+  };
+
+  // ── Styles ──────────────────────────────────────────────────────
+  const S = {
+    page: { minHeight: "100vh", background: "linear-gradient(135deg,#0a0a1a 0%,#1a0533 50%,#0a1a2a 100%)", fontFamily: "'Trebuchet MS', sans-serif", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px", boxSizing: "border-box" },
+    pageTop: { minHeight: "100vh", background: "linear-gradient(135deg,#0a0a1a 0%,#1a0533 50%,#0a1a2a 100%)", fontFamily: "'Trebuchet MS', sans-serif", color: "#fff", display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "32px 20px", boxSizing: "border-box" },
+    card: { background: "rgba(255,255,255,0.06)", backdropFilter: "blur(24px)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "28px", padding: "40px 36px", maxWidth: "600px", width: "100%", boxShadow: "0 30px 80px rgba(0,0,0,0.5)" },
+    title: { fontSize: "2.2rem", fontWeight: 900, background: "linear-gradient(90deg,#e879f9,#f43f5e,#fb923c)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", marginBottom: "6px", textAlign: "center", letterSpacing: "-0.5px" },
+    sub: { color: "rgba(255,255,255,0.45)", textAlign: "center", marginBottom: "28px", fontSize: "0.9rem" },
+    btn: { background: "linear-gradient(135deg,#e879f9,#f43f5e)", border: "none", color: "#fff", padding: "14px 28px", borderRadius: "50px", fontWeight: 800, fontSize: "1rem", cursor: "pointer", width: "100%", marginTop: "12px", boxShadow: "0 6px 24px rgba(232,121,249,0.4)", letterSpacing: "0.3px" },
+    btnGhost: { background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.75)", padding: "12px 24px", borderRadius: "50px", fontWeight: 600, fontSize: "0.88rem", cursor: "pointer", marginTop: "10px", width: "100%" },
+    input: { background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.18)", borderRadius: "14px", padding: "13px 18px", color: "#fff", fontSize: "0.95rem", width: "100%", outline: "none", boxSizing: "border-box" },
+    label: { fontSize: "0.78rem", color: "rgba(255,255,255,0.5)", marginBottom: "6px", display: "block", textTransform: "uppercase", letterSpacing: "0.8px" },
+    optBtn: (sel) => ({ background: sel ? "linear-gradient(135deg,#e879f9,#f43f5e)" : "rgba(255,255,255,0.06)", border: sel ? "2px solid #e879f9" : "1px solid rgba(255,255,255,0.12)", borderRadius: "16px", padding: "15px 20px", color: "#fff", fontSize: "0.93rem", cursor: "pointer", textAlign: "left", width: "100%", marginBottom: "10px", fontWeight: sel ? 700 : 400, transition: "all 0.18s" }),
+    optBtnResult: (correct, chosen, idx) => {
+      if (idx === correct) return { background: "rgba(74,222,128,0.15)", border: "2px solid #4ade80", borderRadius: "16px", padding: "13px 18px", color: "#4ade80", fontSize: "0.88rem", width: "100%", marginBottom: "8px", textAlign: "left", fontWeight: 700 };
+      if (idx === chosen && idx !== correct) return { background: "rgba(248,113,113,0.12)", border: "1px solid #f87171", borderRadius: "16px", padding: "13px 18px", color: "#f87171", fontSize: "0.88rem", width: "100%", marginBottom: "8px", textAlign: "left" };
+      return { background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "16px", padding: "13px 18px", color: "rgba(255,255,255,0.4)", fontSize: "0.88rem", width: "100%", marginBottom: "8px", textAlign: "left" };
+    },
+    progress: (pct) => ({ background: "rgba(255,255,255,0.08)", borderRadius: "50px", height: "5px", marginBottom: "24px", overflow: "hidden", position: "relative" }),
+    progressFill: (pct) => ({ background: "linear-gradient(90deg,#e879f9,#f43f5e)", height: "5px", borderRadius: "50px", width: `${pct}%`, transition: "width 0.5s ease" }),
+    adminRow: { background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "16px", padding: "16px 18px", marginBottom: "12px" },
+    delBtn: { background: "rgba(248,113,113,0.15)", border: "1px solid #f87171", color: "#f87171", padding: "5px 12px", borderRadius: "8px", cursor: "pointer", fontSize: "0.78rem" },
+    editBtn: { background: "rgba(232,121,249,0.15)", border: "1px solid #e879f9", color: "#e879f9", padding: "5px 12px", borderRadius: "8px", cursor: "pointer", fontSize: "0.78rem", marginRight: "6px" },
+    tag: (c) => ({ background: c || "rgba(232,121,249,0.18)", color: c ? "#fff" : "#e879f9", padding: "3px 10px", borderRadius: "20px", fontSize: "0.72rem", display: "inline-block", marginRight: "6px", fontWeight: 700 }),
+    lbRow: (i) => ({ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 16px", borderRadius: "14px", marginBottom: "8px", background: i === 0 ? "rgba(232,121,249,0.14)" : i === 1 ? "rgba(250,204,21,0.08)" : i === 2 ? "rgba(251,146,60,0.08)" : "rgba(255,255,255,0.04)", border: i === 0 ? "1px solid rgba(232,121,249,0.35)" : "1px solid rgba(255,255,255,0.07)" }),
+  };
+
+  if (loading) return (
+    <div style={{ ...S.page }}>
+      <div style={{ textAlign: "center" }}>
+        <div style={{ fontSize: "2rem", marginBottom: "12px" }}>⏳</div>
+        <p style={{ color: "rgba(255,255,255,0.5)" }}>Loading quiz data...</p>
+      </div>
+    </div>
+  );
+
+  // ── HOME ────────────────────────────────────────────────────────
+  if (screen === "home") return (
+    <div style={S.page}>
+      <div style={S.card}>
+        <div style={{ textAlign: "center", fontSize: "3.2rem", marginBottom: "8px" }}>🎓</div>
+        <h1 style={S.title}>Live College Quiz</h1>
+        <p style={S.sub}>Anyone with this link can join · {questions.length} questions</p>
+        <label style={S.label}>Your Nickname</label>
+        <input style={S.input} placeholder="e.g. AyanCSE" value={nickname}
+          onChange={e => setNickname(e.target.value)}
+          onKeyDown={e => e.key === "Enter" && handleStartQuiz()} />
+        {!nickname.trim() && <p style={{ color: "#f87171", fontSize: "0.78rem", marginTop: "4px" }}>Enter a nickname to continue</p>}
+        <button style={S.btn} onClick={handleStartQuiz}>🚀 Start Quiz</button>
+        <button style={S.btnGhost} onClick={() => { setLeaderboard([]); setScreen("leaderboard"); (async () => { try { const lb = await window.storage.get("liveQuiz-leaderboard", true); if (lb) setLeaderboard(JSON.parse(lb.value)); } catch {} setScreen("leaderboard"); })(); }}>🏆 Leaderboard</button>
+        <button style={S.btnGhost} onClick={() => setScreen("admin-login")}>⚙️ Admin Panel</button>
+        <div style={{ marginTop: "20px", padding: "12px 16px", background: "rgba(74,222,128,0.08)", border: "1px solid rgba(74,222,128,0.2)", borderRadius: "12px" }}>
+          <p style={{ margin: 0, fontSize: "0.8rem", color: "rgba(74,222,128,0.8)" }}>🌐 This quiz is LIVE — share this page link with your students to let them join!</p>
+        </div>
+      </div>
+    </div>
+  );
+
+  // ── ADMIN LOGIN ─────────────────────────────────────────────────
+  if (screen === "admin-login") return (
+    <div style={S.page}>
+      <div style={{ ...S.card, maxWidth: "400px" }}>
+        <h1 style={S.title}>Admin Access</h1>
+        <p style={S.sub}>Default password: admin123</p>
+        <label style={S.label}>Password</label>
+        <input style={S.input} type="password" placeholder="Enter password"
+          value={adminPass} onChange={e => setAdminPass(e.target.value)}
+          onKeyDown={e => e.key === "Enter" && handleAdminLogin()} />
+        {adminError && <p style={{ color: "#f87171", fontSize: "0.82rem", marginTop: "6px" }}>{adminError}</p>}
+        <button style={S.btn} onClick={handleAdminLogin}>Login</button>
+        <button style={S.btnGhost} onClick={() => setScreen("home")}>← Back</button>
+      </div>
+    </div>
+  );
+
+  // ── ADMIN PANEL ─────────────────────────────────────────────────
+  if (screen === "admin") return (
+    <div style={S.pageTop}>
+      <div style={{ ...S.card, maxWidth: "680px" }}>
+        <h1 style={S.title}>⚙️ Admin Panel</h1>
+        <p style={S.sub}>{questions.length} questions · Changes go live instantly for all users</p>
+
+        {questions.map((q, idx) => (
+          <div key={q.id} style={S.adminRow}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "10px" }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ marginBottom: "6px" }}>
+                  <span style={S.tag()}>Q{idx + 1}</span>
+                  <span style={S.tag("rgba(250,204,21,0.2)")}>⏱ {q.timer}s</span>
+                </div>
+                <p style={{ margin: "6px 0 8px", fontWeight: 700, lineHeight: 1.4 }}>{q.question}</p>
+                {q.options.map((opt, i) => (
+                  <p key={i} style={{ margin: "3px 0", fontSize: "0.82rem", color: i === q.correct ? "#4ade80" : "rgba(255,255,255,0.45)" }}>
+                    {i === q.correct ? "✓ " : "· "}{opt}
+                  </p>
+                ))}
+              </div>
+              <div style={{ display: "flex", gap: "6px", flexShrink: 0 }}>
+                <button style={S.editBtn} onClick={() => startEdit(q)}>Edit</button>
+                <button style={S.delBtn} onClick={() => deleteQuestion(q.id)}>Del</button>
+              </div>
+            </div>
+          </div>
+        ))}
+
+        {showAddForm ? (
+          <div style={{ ...S.adminRow, border: "1px solid rgba(232,121,249,0.3)", background: "rgba(232,121,249,0.05)" }}>
+            <p style={{ fontWeight: 800, color: "#e879f9", marginBottom: "16px" }}>{editId ? "✏️ Edit Question" : "➕ New Question"}</p>
+            <label style={S.label}>Question Text</label>
+            <input style={{ ...S.input, marginBottom: "14px" }} placeholder="Type your question..."
+              value={newQ.question} onChange={e => setNewQ({ ...newQ, question: e.target.value })} />
+            {newQ.options.map((opt, i) => (
+              <div key={i} style={{ marginBottom: "10px" }}>
+                <label style={S.label}>Option {String.fromCharCode(65 + i)} {newQ.correct === i ? "✓ Correct" : ""}</label>
+                <div style={{ display: "flex", gap: "8px" }}>
+                  <input style={{ ...S.input, flex: 1 }} placeholder={`Option ${String.fromCharCode(65 + i)}`}
+                    value={opt} onChange={e => updateOpt(i, e.target.value)} />
+                  <button onClick={() => setNewQ({ ...newQ, correct: i })}
+                    style={{ padding: "10px 14px", borderRadius: "12px", border: newQ.correct === i ? "2px solid #4ade80" : "1px solid rgba(255,255,255,0.15)", background: newQ.correct === i ? "rgba(74,222,128,0.15)" : "transparent", color: newQ.correct === i ? "#4ade80" : "rgba(255,255,255,0.4)", cursor: "pointer", whiteSpace: "nowrap", fontSize: "0.78rem" }}>
+                    ✓ Correct
+                  </button>
+                </div>
+              </div>
+            ))}
+            <label style={{ ...S.label, marginTop: "8px" }}>Timer (seconds)</label>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "14px" }}>
+              <input type="range" min={5} max={120} value={newQ.timer}
+                onChange={e => setNewQ({ ...newQ, timer: Number(e.target.value) })}
+                style={{ flex: 1, accentColor: "#e879f9" }} />
+              <span style={{ fontWeight: 800, color: "#e879f9", minWidth: "40px" }}>{newQ.timer}s</span>
+            </div>
+            <button style={S.btn} onClick={editId ? saveEdit : addQuestion}>{editId ? "Save Changes" : "Add Question"}</button>
+            <button style={S.btnGhost} onClick={() => { setShowAddForm(false); setEditId(null); setNewQ({ question: "", options: ["", "", "", ""], correct: 0, timer: 20 }); }}>Cancel</button>
+          </div>
+        ) : (
+          <button style={S.btn} onClick={() => { setShowAddForm(true); setEditId(null); }}>+ Add New Question</button>
+        )}
+
+        <div style={{ display: "flex", gap: "10px", marginTop: "4px" }}>
+          <button style={{ ...S.btnGhost, flex: 1 }} onClick={clearLeaderboard}>🗑 Clear Leaderboard</button>
+          <button style={{ ...S.btnGhost, flex: 1 }} onClick={() => setScreen("home")}>← Home</button>
+        </div>
+      </div>
+    </div>
+  );
+
+  // ── QUIZ SCREEN ─────────────────────────────────────────────────
+  if (screen === "quiz") {
+    const q = questions[currentQ];
+    const pct = ((currentQ) / questions.length) * 100;
+    ret
